@@ -10,6 +10,8 @@
 // @grant        none
 // ==/UserScript==
 
+// Last updated: 15 January 2025
+
 (function() {
     'use strict';
 	const originalContent = document.querySelector('div[data-testid="answer_box_text"]').innerHTML;
