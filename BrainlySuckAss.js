@@ -15,7 +15,7 @@
 	const originalContent = document.querySelector('div[data-testid="answer_box_text"]').innerHTML;
 	console.log(originalContent)
 
-    console.log(window.jsData.question)
+    	// console.log(window.jsData.question)
 
 	function checkDOM() {
 		if (
