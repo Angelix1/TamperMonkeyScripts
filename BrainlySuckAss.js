@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Brainly Suck Ass
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  GIMMEH THE ANSWER
 // @author       AGW
 // @match        https://brainly.co.id/*
@@ -12,22 +12,23 @@
 
 (function() {
     'use strict';
-	const targetElement = document.querySelector('div[data-testid="answer_box_text"]');
-	console.log(targetElement.innerHTML)
-	const originalContent = targetElement.innerHTML;
+	const originalContent = document.querySelector('div[data-testid="answer_box_text"]').innerHTML;
+	console.log(originalContent)
+
+    console.log(window.jsData.question)
 
 	function checkDOM() {
 		if (
 
 			(document.getElementsByClassName("brn-unlock-section brn-common-unlock-section")?.length > 0) &&
-			(Object.values(document.querySelectorAll("div")).find(x => x.className.toLowerCase().includes("contentgradient"))?.className.length > 0)
+			(document.querySelector('div[data-testid="answer_box_content"]').parentElement?.className.includes("contentBlocked"))
 
 			) {
 
 			clearInterval(intervalID); // Stops the interval
 
 			const element = document.getElementsByClassName("brn-unlock-section brn-common-unlock-section")
-			let parenting = Object.values(document.querySelectorAll("div")).find(x => x.className.toLowerCase().includes("contentgradient"));
+			let parenting = document.querySelector('div[data-testid="answer_box_content"]').parentElement;
 
 			console.log('Found the ads element:', element);
 			console.log("Found the parentElement", parenting)
@@ -42,11 +43,25 @@
 			let classesToRemove = Array.from(parenting.classList).slice(1);
   			parenting.classList.remove(...classesToRemove);
 
+  			let noPlaceholderBS = Array.from(document.querySelector('div[data-testid="answer_box_text"]').classList).find(x => x.toLowerCase()?.includes("placeholder"))
+  			document.querySelector('div[data-testid="answer_box_text"]').classList.remove(noPlaceholderBS)
+
+
   			setTimeout(() => {
 				document.querySelector('div[data-testid="answer_box_text"]').innerHTML = originalContent
+
 				nx1.remove()
 				nx2.remove()
   			}, 1000)
+
+            setTimeout(() => {
+                if(window.jsData.question.answers[0].attachments.length > 0) {
+
+                    window.jsData.question.answers[0].attachments.forEach(data => {
+                        document.querySelector('div[data-testid="answer_box_text"]').innerHTML += `<img src="${data.full}" loading="eager" style="transform: rotate(0deg) scale(1); max-height: 364px;">`;
+                    })
+                }
+            }, 2000)
 		}
 		else {
 			console.log('Target element not found, checking again...');
